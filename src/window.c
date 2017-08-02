@@ -5063,6 +5063,8 @@ win_setheight(int height)
     win_setheight_win(height, curwin);
 }
 
+extern void myLog (char *msg, int w, int x, int y, int z);
+
 /*
  * Set the window height of window "win" and take care of repositioning other
  * windows to fit around it.
@@ -5106,6 +5108,43 @@ win_setheight_win(int height, win_T *win)
     msg_row = row;
     msg_col = 0;
 
+    // 2017.08.02 - djh
+    //
+    // steps to reproduce bug:
+    //    open vim/gvim with no file to edit
+    //    type :help
+    //    split window
+    //    move cursor down in one of the windows (note the cursor line)
+    //    switch to the other window
+    //    maximize window
+    //    the other window shows the top line instead of the cursor line
+    // the following scrolls other windows to their cursor lines
+#if 1
+    {
+	win_T *curwin_saved;
+	buf_T *curbuf_saved;
+	int y;
+
+	// scrollup() uses curwin and curbuf, so push-before and pop-after
+	curwin_saved = curwin;
+	curbuf_saved = curbuf;
+
+	FOR_ALL_WINDOWS(curwin)
+	{
+	    // can't use w_botline here because it hasn't been updated.
+	    // attempts to update w_botline didn't yield positive results.
+	    y = curwin->w_cursor.lnum - (curwin->w_topline + curwin->w_height - 1);
+	    if (y > 0)
+	    {
+		scrollup (y, TRUE);
+	    }
+	}
+
+	curwin = curwin_saved;
+	curbuf = curbuf_saved;
+    }
+#endif
+	
     redraw_all_later(NOT_VALID);
 }
 
