@@ -280,6 +280,7 @@ update_topline(void)
 	     * of window
 	     */
 	    scroll_cursor_halfway(FALSE);
+	    ((void)scrolljump_value()); // eliminates warning
 #else
 	    if (n >= halfheight)
 		scroll_cursor_halfway(FALSE);
