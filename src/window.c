@@ -5063,8 +5063,6 @@ win_setheight(int height)
     win_setheight_win(height, curwin);
 }
 
-extern void myLog (char *msg, int w, int x, int y, int z);
-
 /*
  * Set the window height of window "win" and take care of repositioning other
  * windows to fit around it.
