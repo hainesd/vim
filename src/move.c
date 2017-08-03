@@ -273,6 +273,14 @@ update_topline(void)
 	    /* If we weren't very close to begin with, we scroll to put the
 	     * cursor in the middle of the window.  Otherwise put the cursor
 	     * near the top of the window. */
+#if 1
+	    /*
+	     * 2017.08.03 - djh
+	     * if cursor is not visible, always scroll to put cusor in middle
+	     * of window
+	     */
+	    scroll_cursor_halfway(FALSE);
+#else
 	    if (n >= halfheight)
 		scroll_cursor_halfway(FALSE);
 	    else
@@ -280,6 +288,7 @@ update_topline(void)
 		scroll_cursor_top(scrolljump_value(), FALSE);
 		check_botline = TRUE;
 	    }
+#endif
 	}
 
 	else
@@ -374,10 +383,19 @@ update_topline(void)
 #endif
 		    line_count = curwin->w_cursor.lnum - curwin->w_botline
 								   + 1 + p_so;
+#if 1
+		/*
+		 * 2017.08.03 - djh
+		 * if cursor is not visible, always scroll to put cusor in middle
+		 * of window
+		 */
+		scroll_cursor_halfway(FALSE);
+#else
 		if (line_count <= curwin->w_height + 1)
 		    scroll_cursor_bot(scrolljump_value(), FALSE);
 		else
 		    scroll_cursor_halfway(FALSE);
+#endif
 	    }
 	}
     }
